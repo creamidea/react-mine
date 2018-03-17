@@ -1,11 +1,6 @@
 import _ from 'lodash';
-
-const FLAG = {
-  M: 'M', // Unrevealed Mine
-  E: 'E', // Unrevealed Empty Square
-  B: 'B', // Revealed Blank Square
-  X: 'X', // Revealed Mine
-};
+import policy from './mine-policy';
+import FLAG from './mine-flag';
 
 export default class MineField {
   constructor(mode) {
@@ -80,14 +75,13 @@ export default class MineField {
 
   isInRange(x, y) {
     const { data } = this;
-    return x < data.length && y < data[0].length;
+    return x >= 0 && x < data.length && y >= 0 && y < data[0].length;
   }
 
   /**
    * 踩到雷区 [x, y]
    */
   step(position) {
-    const { data } = this;
-    console.log(data, position);
+    policy(this, position);
   }
 }
