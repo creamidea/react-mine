@@ -13,17 +13,22 @@ function createField(mode) {
   return fieldInst;
 }
 
+function initState({ mode, field }) {
+  return {
+    mode,
+    time: 0, // 游戏时间
+    status: GAME_STATUS.READY,
+    field,
+    flags: [], // 标记情况
+  };
+}
+
 export default class Mine extends Component {
   constructor() {
     super();
     const mode = GAME_LEVEL.EASY;
     const fieldInst = createField(mode);
-    this.state = {
-      mode,
-      time: 0, // 游戏时间
-      status: GAME_STATUS.READY,
-      field: fieldInst.data,
-    };
+    this.state = initState({ mode, field: fieldInst.data });
     this.fieldInst = fieldInst;
   }
 
@@ -35,55 +40,59 @@ export default class Mine extends Component {
   onReset() {
     const { mode } = this.state;
     const fieldInst = createField(mode);
-    this.setState({
-      mode,
-      time: 0, // 游戏时间
-      status: GAME_STATUS.READY,
-      field: fieldInst.data,
-    });
+
+    this.setState(initState({ mode, field: fieldInst.data }));
     this.fieldInst = fieldInst;
   }
 
   onClick(e, [x, y]) {
     const { status } = this.state;
+    const bombing = this.fieldInst.step([x, y]);
 
-    const over = !this.fieldInst.step([x, y]);
     if (status === GAME_STATUS.RUNNING) {
-      this.updateField(over);
+      this.updateField(bombing);
     } else if (status === GAME_STATUS.READY) {
       this.updateGameStatus(GAME_STATUS.RUNNING).then(() => {
-        this.startTimer();
-        this.updateField(over);
+        this.countTimer();
+        this.updateField(bombing);
       });
     }
   }
 
   onRightClick(e, [x, y]) {
     e.preventDefault();
-    this.fieldInst.flag([x, y]);
-    this.updateField(/* over: */false);
+    const { fieldInst } = this;
+
+    if (fieldInst.isFlag([x, y])) {
+      fieldInst.restore([x, y]);
+    } else {
+      fieldInst.flag([x, y]);
+    }
+
+    this.updateField();
   }
 
-  startTimer() {
+  countTimer() {
     const { status, time } = this.state;
 
     if (status === GAME_STATUS.RUNNING) {
       setTimeout(() => {
         this.setState({
           time: time + 1,
+        }, () => {
+          this.countTimer();
         });
       }, 1000);
     }
   }
 
-  updateField(over) {
+  updateField(bombing = false) {
     // 更新雷区情况
     return new Promise((resolve) => {
       this.setState({
         field: this.fieldInst.data,
       }, (pre, now) => {
-        if (over) this.updateGameStatus(GAME_STATUS.OVER);
-        resolve(pre, now);
+        this.judge(bombing).then(() => resolve(pre, now));
       });
     });
   }
@@ -94,6 +103,18 @@ export default class Mine extends Component {
         status,
       }, resolve);
     });
+  }
+
+  judge(bombing) {
+    if (bombing) {
+      return this.updateGameStatus(GAME_STATUS.OVER);
+    }
+    const { fieldInst } = this;
+    if (fieldInst.reminderMineNumber === 0) {
+      return this.updateGameStatus(GAME_STATUS.OVER);
+    }
+
+    return Promise.resolve();
   }
 
   renderOne([x, y], item) {

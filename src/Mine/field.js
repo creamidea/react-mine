@@ -11,23 +11,18 @@ export default class MineField {
     if (!_.find(_.values(GAME_LEVEL), item => item === mode)) {
       throw new Error('未知游戏模式');
     }
-
-    this.mode = mode;
-    this.data = []; // 雷区
-    this.mines = []; // 雷
-
-    this.init();
+    this.init(mode);
   }
 
   /**
    * 初始化雷区
    */
-  init() {
+  init(mode) {
     let column = 0;
     let row = 0;
     let mineNumber = 0;
 
-    switch (this.mode) {
+    switch (mode) {
       case GAME_LEVEL.EASY:
       default:
         column = 10;
@@ -35,6 +30,10 @@ export default class MineField {
         mineNumber = 10;
         break;
     }
+
+    this.mode = mode;
+    this.data = []; // 雷区
+    this.mines = {}; // 雷
 
     this.initField(row, column);
     this.initMines(mineNumber);
@@ -70,14 +69,18 @@ export default class MineField {
       }
     }
 
-    this.mines = _.flatten(_.map(mines, (items, x) => _.map(items, (v, y) => [x, y])));
+    // 将 map 结构转成 array 结构
+    const aMines = _.flatten(_.map(mines, (items, x) => _.map(items, (v, y) => [x, y])));
 
     // 布雷
-    _.each(this.mines, (mine) => {
+    _.each(aMines, (mine) => {
       data[mine[0]][mine[1]] = FLAG.M;
     });
+
     this.data = data;
+    this.mines = mines;
     this.mineNumber = number;
+    this.reminderMineNumber = number;
   }
 
   /**
@@ -88,8 +91,22 @@ export default class MineField {
     return x >= 0 && x < data.length && y >= 0 && y < data[0].length;
   }
 
+  isFlag([x, y]) {
+    return this.isInRange([x, y]) && this.data[x][y] === FLAG.F;
+  }
+
+  /**
+   * 重置块为探索状态
+   */
+  restore([x, y]) {
+    if (this.isInRange([x, y])) {
+      this.data[x][y] = FLAG.E;
+    }
+  }
+
   /**
    * 踩到雷区 [x, y]
+   * @return {boolean} true: 踩中 false: 未踩中
    */
   step(position) {
     return policy(this, position);
@@ -100,8 +117,9 @@ export default class MineField {
    * @param {} param0
    */
   flag([x, y]) {
-    const { data } = this;
+    const { data, mines } = this;
     if (this.isInRange([x, y])) {
+      if (mines[x][y]) this.reminderMineNumber -= 1;
       data[x][y] = FLAG.F;
     }
   }
