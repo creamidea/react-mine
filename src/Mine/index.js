@@ -144,14 +144,15 @@ export default class Mine extends Component {
   }
 
   renderOne([x, y], item) {
-    const { result } = this.state;
+    const { status } = this.state;
     let className;
 
-    if (item.flag) className = 'c-box c-flag';
-    else if (item.value === FLAG.E) {
+    if (item.flag) {
+      className = 'c-box c-flag';
+    } else if (item.value === FLAG.E) {
       className = 'c-box c-unexplored';
     } else if (item.value === FLAG.M) {
-      className = result === GAME_RESULT.SUCCESS ? 'c-box c-mine' : 'c-box c-unexplored';
+      className = status === GAME_STATUS.OVER ? 'c-box c-mine' : 'c-box c-unexplored';
     } else if (item.value === FLAG.B) className = 'c-box c-block';
     else if (item.value === FLAG.X) className = 'c-box c-bloomed';
     else className = `c-box c-number-${item.value}`;
