@@ -173,7 +173,7 @@ export default class Mine extends Component {
       </div>));
   }
 
-  renderSmall() {
+  renderSmile() {
     const { status, result } = this.state;
     if (status === GAME_STATUS.OVER) {
       if (result === GAME_RESULT.FAILURE) {
@@ -203,7 +203,7 @@ export default class Mine extends Component {
           <div className="c-board">{fieldInst.reminderMineNumber}</div>
           <div>
             <button className="c-btn-reset" onClick={() => this.onReset()}>
-              {this.renderSmall()}
+              {this.renderSmile()}
             </button>
           </div>
           <div className="c-board">{time}</div>
