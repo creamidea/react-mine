@@ -117,8 +117,7 @@ export default class Mine extends Component {
       return this.updateGameStatus(GAME_STATUS.OVER);
     }
     const { fieldInst } = this;
-    if (fieldInst.reminderMineNumber === 0 &&
-      !_.find(fieldInst.data, items => _.find(items, item => item.value === FLAG.E))) {
+    if (fieldInst.reminderMineNumber === 0) {
       return this.updateGameStatus(GAME_STATUS.OVER);
     }
 
@@ -167,17 +166,12 @@ export default class Mine extends Component {
           <option key={level} value={level} >{level}</option>))}
         </select>
 
-        <div>
+        <div className="pannel">
+          <div className="c-board">{fieldInst.reminderMineNumber}</div>
           <div>
-            {fieldInst.reminderMineNumber}
+            <button className="c-btn-reset" onClick={() => this.onReset()}>Reset</button>
           </div>
-          {status === GAME_STATUS.OVER && (
-          <div>
-            <p>GAME OVER!</p>
-            <button onClick={() => this.onReset()}>Reset</button>
-          </div>
-        )}
-          <p>{time}</p>
+          <div className="c-board">{time}</div>
         </div>
 
         <div>
