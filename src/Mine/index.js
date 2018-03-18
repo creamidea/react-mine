@@ -1,20 +1,12 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import MineField from './mine-field';
-import FLAG from './mine-flag';
+import MineField from './field';
+import {
+  FIELD_FLAG as FLAG,
+  GAME_LEVEL,
+  GAME_STATUS,
+} from './constant';
 
-const GAME_STATUS = {
-  READY: 'ready',
-  RUNNING: 'running',
-  PAUSE: 'pause',
-  OVER: 'game over',
-};
-
-const GAME_LEVEL = {
-  EASY: 'easy',
-  MIDDLE: 'middle',
-  HARD: 'hard',
-};
 
 function createField(mode) {
   const fieldInst = new MineField(mode);
@@ -41,7 +33,7 @@ export default class Mine extends Component {
   }
 
   onReset() {
-    const mode = GAME_LEVEL.EASY;
+    const { mode } = this.state;
     const fieldInst = createField(mode);
     this.setState({
       mode,
@@ -55,37 +47,14 @@ export default class Mine extends Component {
   onClick(x, y) {
     const { status } = this.state;
 
-    if (status === GAME_STATUS.READY) {
+    if (status === GAME_STATUS.RUNNING) {
+      this.updateField([x, y]);
+    } else if (status === GAME_STATUS.READY) {
       this.setState({
         status: GAME_STATUS.RUNNING,
       }, () => {
-        const result = this.fieldInst.step([x, y]);
         this.startTimer();
-        // 更新雷区情况
-        this.setState({
-          field: this.fieldInst.data,
-        }, () => {
-          if (!result) {
-            this.setState({
-              status: GAME_STATUS.OVER,
-            });
-          }
-        });
-      });
-    }
-
-    if (status === GAME_STATUS.RUNNING) {
-      const result = this.fieldInst.step([x, y]);
-
-      // 更新雷区情况
-      this.setState({
-        field: this.fieldInst.data,
-      }, () => {
-        if (!result) {
-          this.setState({
-            status: GAME_STATUS.OVER,
-          });
-        }
+        this.updateField([x, y]);
       });
     }
   }
@@ -100,6 +69,21 @@ export default class Mine extends Component {
         });
       }, 1000);
     }
+  }
+
+  updateField([x, y]) {
+    const result = this.fieldInst.step([x, y]);
+
+    // 更新雷区情况
+    this.setState({
+      field: this.fieldInst.data,
+    }, () => {
+      if (!result) {
+        this.setState({
+          status: GAME_STATUS.OVER,
+        });
+      }
+    });
   }
 
   renderOne(x, y, item) {
@@ -122,7 +106,9 @@ export default class Mine extends Component {
 
 
   render() {
-    const { time, status, mode } = this.state;
+    const {
+      time, status, mode,
+    } = this.state;
     return (
       <div>
         <p>Game Mode: {mode}</p>

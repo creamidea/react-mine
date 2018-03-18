@@ -1,10 +1,18 @@
 import _ from 'lodash';
-import policy from './mine-policy';
-import FLAG from './mine-flag';
+import policy from './policy';
+import {
+  FIELD_FLAG as FLAG,
+  GAME_LEVEL,
+} from './constant';
+
 
 export default class MineField {
   constructor(mode) {
-    this.mode = mode || 'easy';
+    if (!_.find(_.values(GAME_LEVEL), item => item === mode)) {
+      throw new Error('未知游戏模式');
+    }
+
+    this.mode = mode;
     this.data = []; // 雷区
     this.mines = []; // 雷
 
@@ -20,14 +28,12 @@ export default class MineField {
     let mineNumber = 0;
 
     switch (this.mode) {
-      case 'easy':
+      case GAME_LEVEL.EASY:
+      default:
         column = 10;
         row = 10;
         mineNumber = 10;
         break;
-
-      default:
-        throw new Error('未知模式');
     }
 
     this.initField(row, column);
@@ -71,6 +77,7 @@ export default class MineField {
       data[mine[0]][mine[1]] = FLAG.M;
     });
     this.data = data;
+    this.mineNumber = number;
   }
 
   /**

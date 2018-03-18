@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Mine from './Mine';
+import Mine from './Mine/index';
 
 class App extends Component {
   render() {

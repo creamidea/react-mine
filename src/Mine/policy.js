@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import FLAG from './mine-flag';
+import { FIELD_FLAG as FLAG } from './constant';
+
 
 function bfs(field, position) {
   const direction = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]];
