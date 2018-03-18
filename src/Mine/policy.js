@@ -20,7 +20,7 @@ function bfs(field, position) {
     const mineNumber = direction.reduce((acc, d) => {
       const x1 = x + d[0];
       const y1 = y + d[1];
-      return field.isInRange(x1, y1) && data[x1][y1] === FLAG.M ? acc + 1 : acc;
+      return field.isInRange([x1, y1]) && data[x1][y1] === FLAG.M ? acc + 1 : acc;
     }, 0);
 
     if (mineNumber === 0) {
@@ -28,7 +28,7 @@ function bfs(field, position) {
       _.each(direction, (d) => {
         const x1 = x + d[0];
         const y1 = y + d[1];
-        if (field.isInRange(x1, y1) && data[x1][y1] === FLAG.E) {
+        if (field.isInRange([x1, y1]) && data[x1][y1] === FLAG.E) {
           data[x1][y1] = FLAG.B;
           queue.push([x1, y1]);
         }

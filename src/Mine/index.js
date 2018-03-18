@@ -44,19 +44,24 @@ export default class Mine extends Component {
     this.fieldInst = fieldInst;
   }
 
-  onClick(x, y) {
+  onClick(e, [x, y]) {
     const { status } = this.state;
 
+    const over = !this.fieldInst.step([x, y]);
     if (status === GAME_STATUS.RUNNING) {
-      this.updateField([x, y]);
+      this.updateField(over);
     } else if (status === GAME_STATUS.READY) {
-      this.setState({
-        status: GAME_STATUS.RUNNING,
-      }, () => {
+      this.updateGameStatus(GAME_STATUS.RUNNING).then(() => {
         this.startTimer();
-        this.updateField([x, y]);
+        this.updateField(over);
       });
     }
+  }
+
+  onRightClick(e, [x, y]) {
+    e.preventDefault();
+    this.fieldInst.flag([x, y]);
+    this.updateField(/* over: */false);
   }
 
   startTimer() {
@@ -71,27 +76,33 @@ export default class Mine extends Component {
     }
   }
 
-  updateField([x, y]) {
-    const result = this.fieldInst.step([x, y]);
-
+  updateField(over) {
     // 更新雷区情况
-    this.setState({
-      field: this.fieldInst.data,
-    }, () => {
-      if (!result) {
-        this.setState({
-          status: GAME_STATUS.OVER,
-        });
-      }
+    return new Promise((resolve) => {
+      this.setState({
+        field: this.fieldInst.data,
+      }, (pre, now) => {
+        if (over) this.updateGameStatus(GAME_STATUS.OVER);
+        resolve(pre, now);
+      });
     });
   }
 
-  renderOne(x, y, item) {
+  updateGameStatus(status) {
+    return new Promise((resolve) => {
+      this.setState({
+        status,
+      }, resolve);
+    });
+  }
+
+  renderOne([x, y], item) {
     const text = _.some([FLAG.E, FLAG.M], flag => flag === item) ? '' : item;
     return (
       <button
         key={`${x}-${y}`}
-        onClick={() => this.onClick(x, y)}
+        onContextMenu={e => this.onRightClick(e, [x, y])}
+        onClick={e => this.onClick(e, [x, y])}
       >{text}
       </button>);
   }
@@ -100,10 +111,9 @@ export default class Mine extends Component {
     const { field } = this.state;
     return _.map(field, (col, x) => (
       <p key={x}>{_.map(col, (item, y) =>
-        this.renderOne(x, y, item))}
+        this.renderOne([x, y], item))}
       </p>));
   }
-
 
   render() {
     const {

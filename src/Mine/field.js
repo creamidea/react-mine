@@ -83,7 +83,7 @@ export default class MineField {
   /**
    * 判断是否在雷区里面
    */
-  isInRange(x, y) {
+  isInRange([x, y]) {
     const { data } = this;
     return x >= 0 && x < data.length && y >= 0 && y < data[0].length;
   }
@@ -93,5 +93,16 @@ export default class MineField {
    */
   step(position) {
     return policy(this, position);
+  }
+
+  /**
+   * 标记地雷
+   * @param {} param0
+   */
+  flag([x, y]) {
+    const { data } = this;
+    if (this.isInRange([x, y])) {
+      data[x][y] = FLAG.F;
+    }
   }
 }
