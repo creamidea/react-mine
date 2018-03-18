@@ -23,9 +23,12 @@ const GAME_RESULT = {
   FAILURE: '1',
 };
 
+const MAX_GAME_TIME = 999; // s
+
 export {
   FIELD_FLAG,
   GAME_STATUS,
   GAME_LEVEL,
   GAME_RESULT,
+  MAX_GAME_TIME,
 };

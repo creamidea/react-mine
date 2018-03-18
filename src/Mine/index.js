@@ -6,6 +6,7 @@ import {
   GAME_LEVEL,
   GAME_STATUS,
   GAME_RESULT,
+  MAX_GAME_TIME,
 } from './constant';
 
 import './index.css';
@@ -91,7 +92,12 @@ export default class Mine extends Component {
         this.setState({
           time: time + 1,
         }, () => {
-          this.countTimer();
+          if (this.state.time > MAX_GAME_TIME) {
+            this.updateGameStatus(GAME_STATUS.OVER)
+              .then(() => this.updateGameResult(GAME_RESULT.FAILURE));
+          } else {
+            this.countTimer();
+          }
         });
       }, 1000);
     }
@@ -168,10 +174,9 @@ export default class Mine extends Component {
   }
 
   renderSmall() {
-    const { status } = this.state;
+    const { status, result } = this.state;
     if (status === GAME_STATUS.OVER) {
-      const { fieldInst } = this;
-      if (_.find(fieldInst.data, items => _.find(items, item => item.value === 'X'))) {
+      if (result === GAME_RESULT.FAILURE) {
         return <img alt="lose" src="/img/lose.png" />;
       }
       return <img alt="win" src="/img/win.png" />;
