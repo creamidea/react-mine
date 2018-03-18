@@ -1,5 +1,5 @@
 {
-  "name": "pr",
+  "name": "react-mine",
   "version": "1.0.0",
   "homepage": "https://creamidea.github.io/react-mine/",
   "dependencies": {
@@ -10,11 +10,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && rm -rf react-mine && mv -f build react-mine",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d react-mine"
   },
   "devDependencies": {
     "eslint": "^4.19.0",

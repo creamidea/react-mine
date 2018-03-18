@@ -9,10 +9,12 @@ import {
   MAX_GAME_TIME,
 } from './constant';
 
+import './img/mine.png';
+import readyPNG from './img/ready.png';
+import winPNG from './img/win.png';
+import losePNG from './img/lose.png';
 import './index.css';
-import losePng from './img/lose.png';
-import winPng from './img/win.png';
-import readyPng from './img/ready.png';
+
 
 function createField(mode) {
   const fieldInst = new MineField(mode);
@@ -181,11 +183,11 @@ export default class Mine extends Component {
     const { status, result } = this.state;
     if (status === GAME_STATUS.OVER) {
       if (result === GAME_RESULT.FAILURE) {
-        return <img alt="lose" src={losePng} />;
+        return <img alt="lose" src={losePNG} />;
       }
-      return <img alt="win" src={winPng} />;
+      return <img alt="win" src={winPNG} />;
     }
-    return <img alt="ready" src={readyPng} />;
+    return <img alt="ready" src={readyPNG} />;
   }
 
   render() {
