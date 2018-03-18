@@ -23,6 +23,16 @@ export default class MineField {
     let mineNumber = 0;
 
     switch (mode) {
+      case GAME_LEVEL.MIDDLE:
+        column = 10;
+        row = 10;
+        mineNumber = 10;
+        break;
+      case GAME_LEVEL.HARD:
+        column = 20;
+        row = 20;
+        mineNumber = 20;
+        break;
       case GAME_LEVEL.EASY:
       default:
         column = 5;

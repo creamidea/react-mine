@@ -51,6 +51,8 @@ export default class Mine extends Component {
   onChange(mode) {
     this.setState({
       mode,
+    }, () => {
+      this.onReset();
     });
   }
 
@@ -185,7 +187,7 @@ export default class Mine extends Component {
     return (
       <div>
         <select
-          style={{ marginTop: '20px' }}
+          style={{ marginTop: '20px', fontSize: '2em' }}
           value={mode}
           onChange={e => this.onChange(e.target.value)}
         >{_.map(_.values(GAME_LEVEL), level => (
