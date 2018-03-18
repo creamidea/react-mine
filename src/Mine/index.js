@@ -5,6 +5,7 @@ import {
   FIELD_FLAG as FLAG,
   GAME_LEVEL,
   GAME_STATUS,
+  GAME_RESULT,
 } from './constant';
 
 import './index.css';
@@ -19,6 +20,7 @@ function initState({ mode, field }) {
     mode,
     time: 0, // 游戏时间
     status: GAME_STATUS.READY,
+    result: null, // 游戏结果
     field,
     flags: [], // 标记情况
   };
@@ -111,25 +113,37 @@ export default class Mine extends Component {
       }, resolve);
     });
   }
+  updateGameResult(result) {
+    return new Promise((resolve) => {
+      this.setState({
+        result,
+      }, resolve);
+    });
+  }
 
   judge(bombing) {
     if (bombing) {
-      return this.updateGameStatus(GAME_STATUS.OVER);
+      return this.updateGameStatus(GAME_STATUS.OVER)
+        .then(() => this.updateGameResult(GAME_RESULT.FAILURE));
     }
     const { fieldInst } = this;
     if (fieldInst.reminderMineNumber === 0) {
-      return this.updateGameStatus(GAME_STATUS.OVER);
+      return this.updateGameStatus(GAME_STATUS.OVER)
+        .then(() => this.updateGameResult(GAME_RESULT.SUCCESS));
     }
 
     return Promise.resolve();
   }
 
   renderOne([x, y], item) {
+    const { result } = this.state;
     let className;
 
     if (item.flag) className = 'c-box c-flag';
-    else if (_.some([FLAG.E, FLAG.M], flag => flag === item.value)) {
+    else if (item.value === FLAG.E) {
       className = 'c-box c-unexplored';
+    } else if (item.value === FLAG.M) {
+      className = result === GAME_RESULT.SUCCESS ? 'c-box c-mine' : 'c-box c-unexplored';
     } else if (item.value === FLAG.B) className = 'c-box c-block';
     else if (item.value === FLAG.X) className = 'c-box c-bloomed';
     else className = `c-box c-number-${item.value}`;
@@ -151,15 +165,27 @@ export default class Mine extends Component {
       </div>));
   }
 
+  renderSmall() {
+    const { status } = this.state;
+    if (status === GAME_STATUS.OVER) {
+      const { fieldInst } = this;
+      if (_.find(fieldInst.data, items => _.find(items, item => item.value === 'X'))) {
+        return <img alt="lose" src="/img/lose.png" />;
+      }
+      return <img alt="win" src="/img/win.png" />;
+    }
+    return <img alt="ready" src="/img/ready.png" />;
+  }
+
   render() {
     const {
-      time, status, mode,
+      time, mode,
     } = this.state;
     const { fieldInst } = this;
     return (
       <div>
-        <div className="test" />
         <select
+          style={{ marginTop: '20px' }}
           value={mode}
           onChange={e => this.onChange(e.target.value)}
         >{_.map(_.values(GAME_LEVEL), level => (
@@ -169,7 +195,9 @@ export default class Mine extends Component {
         <div className="pannel">
           <div className="c-board">{fieldInst.reminderMineNumber}</div>
           <div>
-            <button className="c-btn-reset" onClick={() => this.onReset()}>Reset</button>
+            <button className="c-btn-reset" onClick={() => this.onReset()}>
+              {this.renderSmall()}
+            </button>
           </div>
           <div className="c-board">{time}</div>
         </div>

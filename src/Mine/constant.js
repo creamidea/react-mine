@@ -18,8 +18,14 @@ const GAME_LEVEL = {
   HARD: 'hard',
 };
 
+const GAME_RESULT = {
+  SUCCESS: '0',
+  FAILURE: '1',
+};
+
 export {
   FIELD_FLAG,
   GAME_STATUS,
   GAME_LEVEL,
+  GAME_RESULT,
 };

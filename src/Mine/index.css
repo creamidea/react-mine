@@ -53,3 +53,25 @@
 .c-bloomed {
   background: url(/img/mine.png) no-repeat -420px 0px;
 }
+
+.pannel {
+  margin: 20px auto;
+}
+
+.pannel div {
+  display: inline-block;
+}
+
+.c-board {
+  background: black;
+  color: red;
+  width: 30px;
+  padding: 6px;
+  font-family: menlo;
+}
+
+.c-btn-reset {
+  cursor: pointer;
+  margin: 0 23px;
+  border: 0;
+}
