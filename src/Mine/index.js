@@ -7,6 +7,7 @@ import {
   GAME_STATUS,
 } from './constant';
 
+import './index.css';
 
 function createField(mode) {
   const fieldInst = new MineField(mode);
@@ -43,6 +44,12 @@ export default class Mine extends Component {
 
     this.setState(initState({ mode, field: fieldInst.data }));
     this.fieldInst = fieldInst;
+  }
+
+  onChange(mode) {
+    this.setState({
+      mode,
+    });
   }
 
   onClick(e, [x, y]) {
@@ -119,19 +126,22 @@ export default class Mine extends Component {
   }
 
   renderOne([x, y], item) {
-    let text;
+    let className;
 
-    if (item.flag) text = 'F';
-    else if (_.some([FLAG.E, FLAG.M], flag => flag === item.value)) text = '0';
-    else text = item.value;
+    if (item.flag) className = 'c-box c-flag';
+    else if (_.some([FLAG.E, FLAG.M], flag => flag === item.value)) {
+      className = 'c-box c-unexplored';
+    } else if (item.value === FLAG.B) className = 'c-box c-block';
+    else if (item.value === FLAG.X) className = 'c-box c-bloomed';
+    else className = `c-box c-number-${item.value}`;
 
     return (
       <button
+        className={className}
         key={`${x}-${y}`}
         onContextMenu={e => this.onRightClick(e, [x, y])}
         onClick={e => this.onClick(e, [x, y])}
-      >{text}
-      </button>);
+      />);
   }
 
   renderField() {
@@ -146,18 +156,33 @@ export default class Mine extends Component {
     const {
       time, status, mode,
     } = this.state;
+    const { fieldInst } = this;
     return (
       <div>
-        <p>Game Mode: {mode}</p>
-        {status === GAME_STATUS.OVER && (
+        <div className="test" />
+        <select
+          value={mode}
+          onChange={e => this.onChange(e.target.value)}
+        >{_.map(_.values(GAME_LEVEL), level => (
+          <option key={level} value={level} >{level}</option>))}
+        </select>
+
+        <div>
+          <div>
+            {fieldInst.reminderMineNumber}
+          </div>
+          {status === GAME_STATUS.OVER && (
           <div>
             <p>GAME OVER!</p>
             <button onClick={() => this.onReset()}>Reset</button>
           </div>
         )}
-        <p>{time}</p>
-        {
-        this.renderField()}
+          <p>{time}</p>
+        </div>
+
+        <div>
+          {this.renderField()}
+        </div>
       </div>);
   }
 }
