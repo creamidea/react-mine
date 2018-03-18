@@ -10,6 +10,9 @@ import {
 } from './constant';
 
 import './index.css';
+import losePng from './img/lose.png';
+import winPng from './img/win.png';
+import readyPng from './img/ready.png';
 
 function createField(mode) {
   const fieldInst = new MineField(mode);
@@ -178,11 +181,11 @@ export default class Mine extends Component {
     const { status, result } = this.state;
     if (status === GAME_STATUS.OVER) {
       if (result === GAME_RESULT.FAILURE) {
-        return <img alt="lose" src="/img/lose.png" />;
+        return <img alt="lose" src={losePng} />;
       }
-      return <img alt="win" src="/img/win.png" />;
+      return <img alt="win" src={winPng} />;
     }
-    return <img alt="ready" src="/img/ready.png" />;
+    return <img alt="ready" src={readyPng} />;
   }
 
   render() {

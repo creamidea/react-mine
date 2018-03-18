@@ -3,6 +3,7 @@
   height: 32px;
   padding: 0;
   border: 0;
+  background: url(./img/mine.png) no-repeat;
 }
 
 .c-box:hover {
@@ -10,48 +11,48 @@
 }
 
 .c-unexplored {
-  background: url('/img/mine.png') no-repeat 0 0;
+  background-position: 0 0;
 }
 
 .c-block {
-  background: url(/img/mine.png) no-repeat -35px 0px;
+  background-position: -35px 0px;
 }
 
 .c-flag {
-  background: url(/img/mine.png) no-repeat -70px 0px;
+  background-position: -70px 0px;
 }
 
 .c-mine {
-  background: url(/img/mine.png) no-repeat -105px 0px;
+  background-position: -105px 0px;
 }
 
 .c-number-1 {
-  background: url(/img/mine.png) no-repeat -140px 0px;
+  background-position: -140px 0px;
 }
 .c-number-2 {
-  background: url(/img/mine.png) no-repeat -175px 0px;
+  background-position: -175px 0px;
 }
 .c-number-3 {
-  background: url(/img/mine.png) no-repeat -210px 0px;
+  background-position: -210px 0px;
 }
 .c-number-4 {
-  background: url(/img/mine.png) no-repeat -245px 0px;
+  background-position: -245px 0px;
 }
 .c-number-5 {
-  background: url(/img/mine.png) no-repeat -280px 0px;
+  background-position: -280px 0px;
 }
 .c-number-6 {
-  background: url(/img/mine.png) no-repeat -315px 0px;
+  background-position: -315px 0px;
 }
 .c-number-7 {
-  background: url(/img/mine.png) no-repeat -350px 0px;
+  background-position: -350px 0px;
 }
 .c-number-8 {
-  background: url(/img/mine.png) no-repeat -385px 0px;
+  background-position: -385px 0px;
 }
 
 .c-bloomed {
-  background: url(/img/mine.png) no-repeat -420px 0px;
+  background-position: -420px 0px;
 }
 
 .pannel {
