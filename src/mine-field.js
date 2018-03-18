@@ -73,6 +73,9 @@ export default class MineField {
     this.data = data;
   }
 
+  /**
+   * 判断是否在雷区里面
+   */
   isInRange(x, y) {
     const { data } = this;
     return x >= 0 && x < data.length && y >= 0 && y < data[0].length;
@@ -82,6 +85,6 @@ export default class MineField {
    * 踩到雷区 [x, y]
    */
   step(position) {
-    policy(this, position);
+    return policy(this, position);
   }
 }

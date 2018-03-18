@@ -13,7 +13,7 @@ function bfs(field, position) {
 
     if (data[x][y] === FLAG.M) {
       data[x][y] = FLAG.X;
-      break;
+      return false;
     }
 
     const mineNumber = direction.reduce((acc, d) => {
@@ -36,8 +36,10 @@ function bfs(field, position) {
       data[x][y] = mineNumber;
     }
   }
+
+  return true;
 }
 
 export default function policy(field, position) {
-  bfs(field, position);
+  return bfs(field, position);
 }
