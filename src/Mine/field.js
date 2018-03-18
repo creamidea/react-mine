@@ -25,15 +25,15 @@ export default class MineField {
     switch (mode) {
       case GAME_LEVEL.EASY:
       default:
-        column = 10;
-        row = 10;
-        mineNumber = 10;
+        column = 5;
+        row = 5;
+        mineNumber = 1;
         break;
     }
 
     this.mode = mode;
     this.data = []; // 雷区
-    this.mines = {}; // 雷
+    this.mines = {}; // 雷，方便后续快速判断
 
     this.initField(row, column);
     this.initMines(mineNumber);
@@ -43,7 +43,10 @@ export default class MineField {
    * 初始化雷区
    */
   initField(row, column) {
-    const data = _.map(_.repeat(FLAG.E, row), () => _.split(_.repeat(FLAG.E, column), ''));
+    const data = _.map(_.repeat(FLAG.E, row), () => _.map(_.repeat(FLAG.E, column), value => ({
+      value,
+      flag: false,
+    })));
     this.data = data;
   }
 
@@ -71,10 +74,9 @@ export default class MineField {
 
     // 将 map 结构转成 array 结构
     const aMines = _.flatten(_.map(mines, (items, x) => _.map(items, (v, y) => [x, y])));
-
     // 布雷
     _.each(aMines, (mine) => {
-      data[mine[0]][mine[1]] = FLAG.M;
+      data[mine[0]][mine[1]].value = FLAG.M;
     });
 
     this.data = data;
@@ -91,25 +93,20 @@ export default class MineField {
     return x >= 0 && x < data.length && y >= 0 && y < data[0].length;
   }
 
-  isFlag([x, y]) {
-    return this.isInRange([x, y]) && this.data[x][y] === FLAG.F;
-  }
-
-  /**
-   * 重置块为探索状态
-   */
-  restore([x, y]) {
-    if (this.isInRange([x, y])) {
-      this.data[x][y] = FLAG.E;
-    }
-  }
-
   /**
    * 踩到雷区 [x, y]
    * @return {boolean} true: 踩中 false: 未踩中
    */
   step(position) {
     return policy(this, position);
+  }
+
+
+  /**
+   * 判断有没有标记
+   */
+  isFlag([x, y]) {
+    return this.isInRange([x, y]) && this.data[x][y].flag;
   }
 
   /**
@@ -119,8 +116,17 @@ export default class MineField {
   flag([x, y]) {
     const { data, mines } = this;
     if (this.isInRange([x, y])) {
-      if (mines[x][y]) this.reminderMineNumber -= 1;
-      data[x][y] = FLAG.F;
+      if (_.get(mines, [x, y])) this.reminderMineNumber -= 1;
+      data[x][y].flag = true;
+    }
+  }
+
+  /**
+   * 重置块为探索状态
+   */
+  clear([x, y]) {
+    if (this.isInRange([x, y])) {
+      this.data[x][y].flag = false;
     }
   }
 }

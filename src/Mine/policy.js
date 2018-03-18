@@ -11,30 +11,33 @@ function bfs(field, position) {
 
   while (queue.length > 0) {
     const [x, y] = queue.pop();
+    const item = data[x][y];
 
-    if (data[x][y] === FLAG.M) {
-      data[x][y] = FLAG.X;
+    if (item.flag) {
+      return false;
+    } else if (item.value === FLAG.M) {
+      data[x][y].value = FLAG.X;
       return true;
     }
 
     const mineNumber = direction.reduce((acc, d) => {
       const x1 = x + d[0];
       const y1 = y + d[1];
-      return field.isInRange([x1, y1]) && data[x1][y1] === FLAG.M ? acc + 1 : acc;
+      return field.isInRange([x1, y1]) && data[x1][y1].value === FLAG.M ? acc + 1 : acc;
     }, 0);
 
     if (mineNumber === 0) {
-      data[x][y] = FLAG.B;
+      data[x][y].value = FLAG.B;
       _.each(direction, (d) => {
         const x1 = x + d[0];
         const y1 = y + d[1];
-        if (field.isInRange([x1, y1]) && data[x1][y1] === FLAG.E) {
-          data[x1][y1] = FLAG.B;
+        if (field.isInRange([x1, y1]) && data[x1][y1].value === FLAG.E) {
+          data[x1][y1].value = FLAG.B;
           queue.push([x1, y1]);
         }
       });
     } else {
-      data[x][y] = mineNumber;
+      data[x][y].value = mineNumber;
     }
   }
 

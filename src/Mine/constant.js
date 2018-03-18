@@ -3,7 +3,6 @@ const FIELD_FLAG = {
   E: 'E', // Unrevealed Empty Square
   B: 'B', // Revealed Blank Square
   X: 'X', // Revealed Mine
-  F: 'F', // flag
 };
 
 const GAME_STATUS = {

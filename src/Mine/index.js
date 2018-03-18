@@ -64,7 +64,7 @@ export default class Mine extends Component {
     const { fieldInst } = this;
 
     if (fieldInst.isFlag([x, y])) {
-      fieldInst.restore([x, y]);
+      fieldInst.clear([x, y]);
     } else {
       fieldInst.flag([x, y]);
     }
@@ -110,7 +110,8 @@ export default class Mine extends Component {
       return this.updateGameStatus(GAME_STATUS.OVER);
     }
     const { fieldInst } = this;
-    if (fieldInst.reminderMineNumber === 0) {
+    if (fieldInst.reminderMineNumber === 0 &&
+      !_.find(fieldInst.data, items => _.find(items, item => item.value === FLAG.E))) {
       return this.updateGameStatus(GAME_STATUS.OVER);
     }
 
@@ -118,7 +119,12 @@ export default class Mine extends Component {
   }
 
   renderOne([x, y], item) {
-    const text = _.some([FLAG.E, FLAG.M], flag => flag === item) ? '' : item;
+    let text;
+
+    if (item.flag) text = 'F';
+    else if (_.some([FLAG.E, FLAG.M], flag => flag === item.value)) text = '0';
+    else text = item.value;
+
     return (
       <button
         key={`${x}-${y}`}
@@ -131,9 +137,9 @@ export default class Mine extends Component {
   renderField() {
     const { field } = this.state;
     return _.map(field, (col, x) => (
-      <p key={x}>{_.map(col, (item, y) =>
+      <div key={x}>{_.map(col, (item, y) =>
         this.renderOne([x, y], item))}
-      </p>));
+      </div>));
   }
 
   render() {
